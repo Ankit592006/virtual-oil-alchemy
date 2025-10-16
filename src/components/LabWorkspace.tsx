@@ -21,7 +21,7 @@ const LabWorkspace = () => {
 
   const chemicals: Chemical[] = [
     { id: "castor", name: "Castor Oil", formula: "Triglyceride", color: "bg-amber-300", amount: 0 },
-    { id: "ethanol", name: "Ethanol", formula: "C₂H₅OH", color: "bg-blue-200", amount: 0 },
+    { id: "methanol", name: "Methanol", formula: "CH₃OH", color: "bg-blue-200", amount: 0 },
     { id: "naoh", name: "Sodium Hydroxide", formula: "NaOH", color: "bg-gray-200", amount: 0 },
   ];
 
@@ -29,7 +29,7 @@ const LabWorkspace = () => {
 
   const steps = [
     { title: "Add Castor Oil", description: "Pour 100ml of castor oil into the reaction vessel" },
-    { title: "Add Ethanol", description: "Add 30ml of ethanol to the mixture" },
+    { title: "Add Methanol", description: "Add 30ml of methanol to the mixture" },
     { title: "Add NaOH Catalyst", description: "Carefully add 1g of sodium hydroxide" },
     { title: "Mix & React", description: "Stir the mixture and observe the reaction" },
     { title: "Separate Products", description: "Wait for biodiesel and glycerol to separate" },
@@ -217,13 +217,13 @@ const LabWorkspace = () => {
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Experiment Complete!</h3>
                 <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-                  You have successfully produced biodiesel through the transesterification of castor oil with ethanol using NaOH as a catalyst.
+                  You have successfully produced biodiesel through the transesterification of castor oil with methanol using NaOH as a catalyst.
                 </p>
                 <div className="glass-effect p-6 rounded-xl max-w-md mx-auto mb-8">
                   <h4 className="font-semibold mb-4">Products Obtained:</h4>
                   <div className="space-y-2 text-left">
                     <div className="flex justify-between">
-                      <span>Biodiesel (FAEE)</span>
+                      <span>Biodiesel (FAME)</span>
                       <span className="font-mono">~90ml</span>
                     </div>
                     <div className="flex justify-between">

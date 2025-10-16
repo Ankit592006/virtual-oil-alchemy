@@ -38,7 +38,7 @@ const LabIntro = ({ onStart }: LabIntroProps) => {
               Transesterification Process
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Learn the chemical reaction that converts vegetable oils into biodiesel fuel using ethanol and sodium hydroxide catalyst
+              Learn the chemical reaction that converts vegetable oils into biodiesel fuel using methanol and sodium hydroxide catalyst
             </p>
           </div>
 
@@ -50,7 +50,7 @@ const LabIntro = ({ onStart }: LabIntroProps) => {
               </div>
               <h3 className="text-xl font-semibold mb-3">Step 1: Prepare Reactants</h3>
               <p className="text-muted-foreground">
-                Measure and add castor oil, ethanol, and NaOH catalyst to the reaction vessel
+                Measure and add castor oil, methanol, and NaOH catalyst to the reaction vessel
               </p>
             </div>
 
@@ -79,9 +79,9 @@ const LabIntro = ({ onStart }: LabIntroProps) => {
           <div className="glass-effect rounded-2xl p-8 mb-12">
             <h3 className="text-2xl font-semibold mb-6 text-center">Chemical Equation</h3>
             <div className="text-center font-mono text-lg">
-              <div className="mb-2">Triglyceride + 3 Ethanol → 3 Biodiesel + Glycerol</div>
+              <div className="mb-2">Triglyceride + 3 Methanol → 3 Biodiesel + Glycerol</div>
               <div className="text-sm text-muted-foreground mt-4">
-                (Castor Oil) + C₂H₅OH + NaOH → Fatty Acid Ethyl Esters + C₃H₈O₃
+                (Castor Oil) + CH₃OH + NaOH → Fatty Acid Methyl Esters + C₃H₈O₃
               </div>
             </div>
           </div>
