@@ -1,8 +1,29 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Image, Video, Users } from "lucide-react";
+import { Home, Image, Video, Users, Lock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { User, Session } from "@supabase/supabase-js";
 
 const Navbar = () => {
   const location = useLocation();
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
   
   const links = [
     { to: "/", label: "Home", icon: Home },
@@ -10,6 +31,12 @@ const Navbar = () => {
     { to: "/videos", label: "Product Videos", icon: Video },
     { to: "/students", label: "Student Details", icon: Users },
   ];
+
+  if (session) {
+    links.push({ to: "/admin", label: "Admin", icon: Lock });
+  } else {
+    links.push({ to: "/auth", label: "Login", icon: Lock });
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">

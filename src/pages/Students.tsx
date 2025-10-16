@@ -1,43 +1,59 @@
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import { Card } from "@/components/ui/card";
 import { Users, Mail, GraduationCap, UserCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface GroupInfo {
+  project_title: string;
+  institution: string;
+  department: string;
+  academic_year: string;
+}
+
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  email: string | null;
+  responsibilities: string[] | null;
+}
 
 const Students = () => {
-  // Add your group details here
-  const groupInfo = {
-    projectTitle: "Biodiesel Production from Castor Oil using Methanol",
-    institution: "Your Institution Name",
-    department: "Department of Chemistry",
-    year: "2024-2025",
+  const [groupInfo, setGroupInfo] = useState<GroupInfo | null>(null);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+
+  useEffect(() => {
+    fetchGroupInfo();
+    fetchTeamMembers();
+  }, []);
+
+  const fetchGroupInfo = async () => {
+    const { data, error } = await supabase
+      .from("group_info")
+      .select("*")
+      .single();
+    
+    if (error && error.code !== 'PGRST116') {
+      toast.error("Failed to load group info");
+    } else if (data) {
+      setGroupInfo(data);
+    }
   };
 
-  // Add your team members here
-  const teamMembers = [
-    {
-      name: "Student Name 1",
-      role: "Team Leader",
-      email: "student1@example.com",
-      responsibilities: "Project coordination and documentation",
-    },
-    {
-      name: "Student Name 2",
-      role: "Research Analyst",
-      email: "student2@example.com",
-      responsibilities: "Literature review and experimental design",
-    },
-    {
-      name: "Student Name 3",
-      role: "Lab Specialist",
-      email: "student3@example.com",
-      responsibilities: "Conducting experiments and data collection",
-    },
-    {
-      name: "Student Name 4",
-      role: "Data Analyst",
-      email: "student4@example.com",
-      responsibilities: "Data analysis and result interpretation",
-    },
-  ];
+  const fetchTeamMembers = async () => {
+    const { data, error } = await supabase
+      .from("team_members")
+      .select("*")
+      .order("created_at", { ascending: true });
+    
+    if (error) {
+      toast.error("Failed to load team members");
+    } else {
+      setTeamMembers(data || []);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -57,24 +73,28 @@ const Students = () => {
             <GraduationCap className="w-8 h-8 text-primary" />
             <h2 className="text-2xl font-bold">Project Information</h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-semibold text-primary mb-2">Project Title</h3>
-              <p className="text-muted-foreground">{groupInfo.projectTitle}</p>
+          {groupInfo ? (
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold text-primary mb-2">Project Title</h3>
+                <p className="text-muted-foreground">{groupInfo.project_title}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-primary mb-2">Institution</h3>
+                <p className="text-muted-foreground">{groupInfo.institution}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-primary mb-2">Department</h3>
+                <p className="text-muted-foreground">{groupInfo.department}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-primary mb-2">Academic Year</h3>
+                <p className="text-muted-foreground">{groupInfo.academic_year}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-primary mb-2">Institution</h3>
-              <p className="text-muted-foreground">{groupInfo.institution}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-primary mb-2">Department</h3>
-              <p className="text-muted-foreground">{groupInfo.department}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-primary mb-2">Academic Year</h3>
-              <p className="text-muted-foreground">{groupInfo.year}</p>
-            </div>
-          </div>
+          ) : (
+            <p className="text-muted-foreground">Loading group information...</p>
+          )}
         </Card>
 
         {/* Team Members */}
@@ -83,38 +103,42 @@ const Students = () => {
             <Users className="w-8 h-8 text-secondary" />
             <h2 className="text-2xl font-bold">Team Members</h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {teamMembers.map((member, index) => (
-              <Card key={index} className="p-6 glass-effect hover:scale-105 transition-transform">
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <UserCircle className="w-10 h-10 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
-                    <p className="text-sm text-primary font-medium mb-2">{member.role}</p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                      <Mail className="w-4 h-4" />
-                      <a href={`mailto:${member.email}`} className="hover:text-primary transition-colors">
-                        {member.email}
-                      </a>
+          {teamMembers.length > 0 ? (
+            <div className="grid md:grid-cols-2 gap-6">
+              {teamMembers.map((member) => (
+                <Card key={member.id} className="p-6 glass-effect hover:scale-105 transition-transform">
+                  <div className="flex items-start gap-4">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <UserCircle className="w-10 h-10 text-primary" />
                     </div>
-                    <p className="text-sm text-muted-foreground">{member.responsibilities}</p>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
+                      <p className="text-sm text-primary font-medium mb-2">{member.role}</p>
+                      {member.email && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                          <Mail className="w-4 h-4" />
+                          <a href={`mailto:${member.email}`} className="hover:text-primary transition-colors">
+                            {member.email}
+                          </a>
+                        </div>
+                      )}
+                      {member.responsibilities && member.responsibilities.length > 0 && (
+                        <ul className="text-sm text-muted-foreground list-disc list-inside">
+                          {member.responsibilities.map((resp, i) => (
+                            <li key={i}>{resp}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <p className="text-muted-foreground">No team members added yet. Login to admin panel to add members.</p>
+          )}
         </div>
 
-        {/* Instructions */}
-        <Card className="p-8 glass-effect text-center">
-          <h3 className="text-xl font-semibold mb-4">Customize This Page</h3>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            To update the team information, edit the groupInfo and teamMembers arrays in the Students.tsx file.
-            You can add or remove team members and customize all the details to match your actual project group.
-          </p>
-        </Card>
       </div>
     </div>
   );
